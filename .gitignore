@@ -1,0 +1,5 @@
+model.pkl
+*.pkl
+__pycache__/
+*.pyc
+crop.csv

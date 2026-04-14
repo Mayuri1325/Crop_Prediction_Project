@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Crop Prediction</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0px 10px 25px rgba(0,0,0,0.2);
+            text-align: center;
+            width: 350px;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        select, input {
+            width: 90%;
+            padding: 10px;
+            margin: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            background: #4facfe;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #00c6ff;
+        }
+
+        h3 {
+            margin-top: 20px;
+            color: green;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+    <h2>🌾 Crop Production Prediction</h2>
+
+    <form action="/predict" method="post">
+
+        <select name="state" required>
+    <option value="">Select State</option>
+
+    {% for s in states %}
+    <option value="{{ s }}">{{ s }}</option>
+    {% endfor %}
+
+</select>
+        <select name="season" required>
+    <option value="">Select Season</option>
+
+    {% for s in seasons %}
+    <option value="{{ s }}">{{ s }}</option>
+    {% endfor %}
+
+</select>
+
+       <select name="crop" required>
+    <option value="">Select Crop</option>
+
+    {% for c in crops %}
+    <option value="{{ c }}">{{ c }}</option>
+    {% endfor %}
+
+</select>
+
+        <!-- Area Input -->
+        <input type="number" name="area" placeholder="Enter Area" required>
+
+        <button type="submit">Predict</button>
+    </form>
+
+    <!-- Result Display -->
+    {% if result is not none %}
+    <h3>🌟 Predicted Production: {{ result }}</h3>
+    {% endif %}
+
+</div>
+
+</body>
+</html>
