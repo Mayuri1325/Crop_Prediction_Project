@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 import joblib
 
 app = Flask(__name__)
@@ -10,15 +10,19 @@ le_season = joblib.load("season_encoder.pkl")
 le_crop = joblib.load("crop_encoder.pkl")
 
 
-# 🏠 Home Page (loads dropdown values)
+# 🏠 Home Page
 @app.route("/")
 def home():
     states = list(le_state.classes_)
     seasons = list(le_season.classes_)
     crops = list(le_crop.classes_)
 
+    # Get result from URL (after redirect)
+    result = request.args.get("result")
+
     return render_template(
         "index.html",
+        result=result,
         states=states,
         seasons=seasons,
         crops=crops
@@ -33,7 +37,7 @@ def predict():
     crop = request.form["crop"]
     area = float(request.form["area"])
 
-    # Convert text → numbers
+    # Encode inputs
     state_val = le_state.transform([state])[0]
     season_val = le_season.transform([season])[0]
     crop_val = le_crop.transform([crop])[0]
@@ -41,20 +45,12 @@ def predict():
     # Predict
     prediction = model.predict([[state_val, season_val, crop_val, area]])
 
-    # Send dropdown values again (IMPORTANT)
-    states = list(le_state.classes_)
-    seasons = list(le_season.classes_)
-    crops = list(le_crop.classes_)
+    result = round(prediction[0], 2)
 
-    return render_template(
-        "index.html",
-        result=round(prediction[0], 2),
-        states=states,
-        seasons=seasons,
-        crops=crops
-    )
+    # Redirect to home with result (BEST PRACTICE)
+    return redirect(url_for("home", result=result))
 
 
 # ▶ Run App
 if __name__ == "__main__":
-   app.run(debug=True, port=5001)
+    app.run(debug=True, port=5001)
